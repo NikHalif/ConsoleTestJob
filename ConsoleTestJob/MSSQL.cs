@@ -95,7 +95,7 @@ namespace ConsoleTestJob
                 else command.Parameters.AddWithValue("buyerInn", deal.buyerInn);
                 if (String.IsNullOrEmpty(deal.buyerName)) command.Parameters.AddWithValue("buyerName", DBNull.Value);
                 else command.Parameters.AddWithValue("buyerName", deal.buyerName);
-                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate < MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
+                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate > MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
                 else command.Parameters.AddWithValue("dealDate", deal.dealDate);
                 command.Parameters.AddWithValue("dealNumber", deal.dealNumber);
                 if (String.IsNullOrEmpty(deal.sellerInn)) command.Parameters.AddWithValue("sellerInn", DBNull.Value);
@@ -118,7 +118,7 @@ namespace ConsoleTestJob
                 else command.Parameters.AddWithValue("buyerInn", deal.buyerInn);
                 if (String.IsNullOrEmpty(deal.buyerName)) command.Parameters.AddWithValue("buyerName", DBNull.Value);
                 else command.Parameters.AddWithValue("buyerName", deal.buyerName);
-                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate < MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
+                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate > MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
                 else command.Parameters.AddWithValue("dealDate", deal.dealDate);
                 command.Parameters.AddWithValue("dealNumber", deal.dealNumber);
                 if (String.IsNullOrEmpty(deal.sellerInn)) command.Parameters.AddWithValue("sellerInn", DBNull.Value);
@@ -154,7 +154,7 @@ namespace ConsoleTestJob
             else command.Parameters.AddWithValue("buyerInn", deal.buyerInn);
             if (String.IsNullOrEmpty(deal.buyerName)) command.Parameters.AddWithValue("buyerName", DBNull.Value);
             else command.Parameters.AddWithValue("buyerName", deal.buyerName);
-            if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate < MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
+            if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate > MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
             else command.Parameters.AddWithValue("dealDate", deal.dealDate);
             command.Parameters.AddWithValue("dealNumber", deal.dealNumber);
             if (String.IsNullOrEmpty(deal.sellerInn)) command.Parameters.AddWithValue("sellerInn", DBNull.Value);
