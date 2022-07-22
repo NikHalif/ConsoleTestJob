@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace ConsoleTestJob
@@ -24,6 +26,63 @@ namespace ConsoleTestJob
             else throw new Exception($"Запрос не выполнен!\nНет подключения к базе данных.\nСтатус: {connection.State}");
         }
 
+        protected DataTable GetTable()
+        {
+            DataTable tbl = new DataTable();
+            tbl.Columns.Add(new DataColumn("dealNumber", typeof(string)));
+            tbl.Columns.Add(new DataColumn("dealDate", typeof(DateTime)));
+            tbl.Columns.Add(new DataColumn("buyerInn", typeof(string)));
+            tbl.Columns.Add(new DataColumn("buyerName", typeof(string)));
+            tbl.Columns.Add(new DataColumn("sellerInn", typeof(string)));
+            tbl.Columns.Add(new DataColumn("sellerName", typeof(string)));
+            tbl.Columns.Add(new DataColumn("woodVolumeBuyer", typeof(double)));
+            tbl.Columns.Add(new DataColumn("woodVolumeSeller", typeof(double)));
+            return tbl;
+        }
+
+        public void Bulk(List<Deal> deals)
+        {
+            DataTable tbl = GetTable();
+
+            foreach (var deal in deals)
+            {
+                if (CountDeal(deal) <= 0)
+                {
+                    DataRow dr = tbl.NewRow();
+                    dr["dealNumber"] = deal.dealNumber;
+                    if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate < MaxDate) dr["dealDate"] = DBNull.Value;
+                    else dr["dealDate"] = deal.dealDate;
+                    if (String.IsNullOrEmpty(deal.buyerInn)) dr["buyerInn"] = DBNull.Value;
+                    else dr["buyerInn"] = deal.buyerInn;
+                    if (String.IsNullOrEmpty(deal.buyerName)) dr["buyerName"] = DBNull.Value;
+                    else dr["buyerName"] = deal.buyerName;
+                    if (String.IsNullOrEmpty(deal.sellerInn)) dr["sellerInn"] = DBNull.Value;
+                    else dr["sellerInn"] = deal.sellerInn;
+                    if (String.IsNullOrEmpty(deal.sellerName)) dr["sellerName"] = DBNull.Value;
+                    else dr["sellerName"] = deal.sellerName;
+                    dr["woodVolumeBuyer"] = deal.woodVolumeBuyer;
+                    dr["woodVolumeSeller"] = deal.woodVolumeSeller;
+                    tbl.Rows.Add(dr);
+                }
+            }
+
+            using (SqlBulkCopy objbulk = new SqlBulkCopy(connection))
+            {
+
+                objbulk.DestinationTableName = "Deals";
+
+                objbulk.ColumnMappings.Add("dealNumber", "dealNumber");
+                objbulk.ColumnMappings.Add("dealDate", "dealDate");
+                objbulk.ColumnMappings.Add("buyerInn", "buyerInn");
+                objbulk.ColumnMappings.Add("buyerName", "buyerName");
+                objbulk.ColumnMappings.Add("sellerInn", "sellerInn");
+                objbulk.ColumnMappings.Add("sellerName", "sellerName");
+                objbulk.ColumnMappings.Add("woodVolumeBuyer", "woodVolumeBuyer");
+                objbulk.ColumnMappings.Add("woodVolumeSeller", "woodVolumeSeller");
+
+                objbulk.WriteToServer(tbl);
+            }
+        }
 
         public int Insert(Deal deal)
         {
@@ -50,14 +109,9 @@ namespace ConsoleTestJob
             }
         }
 
-        /// <summary>
-        /// Добавить значение в базу при его отсутсвии
-        /// </summary>
-        /// <param name="deal"> Объект сделки </param>
-        /// <returns></returns>
-        public int IsAddDeal(Deal deal)
+        public int CountDeal(Deal deal)
         {
-            var queryString = @"SELECT COUNT(*) FROM Deals WHERE buyerInn=@buyerInn AND buyerName=@buyerName AND dealDate=@dealDate AND dealNumber=@dealNumber AND sellerInn=@sellerInn AND sellerName=@sellerName AND woodVolumeBuyer=@woodVolumeBuyer AND woodVolumeSeller=@woodVolumeSeller";
+            var queryString = @"SELECT COUNT(*) FROM Deals WHERE dealNumber=@dealNumber AND dealDate=@dealDate AND buyerInn=@buyerInn AND buyerName=@buyerName AND sellerInn=@sellerInn AND sellerName=@sellerName AND woodVolumeBuyer=@woodVolumeBuyer AND woodVolumeSeller=@woodVolumeSeller";
             using (SqlCommand command = new SqlCommand(queryString, connection))
             {
                 if (String.IsNullOrEmpty(deal.buyerInn)) command.Parameters.AddWithValue("buyerInn", DBNull.Value);
@@ -74,10 +128,8 @@ namespace ConsoleTestJob
                 command.Parameters.AddWithValue("woodVolumeBuyer", deal.woodVolumeBuyer);
                 command.Parameters.AddWithValue("woodVolumeSeller", deal.woodVolumeSeller);
 
-                var count = (Int32)command.ExecuteScalar();
-                if (count > 0) return -1;
+                return (Int32)command.ExecuteScalar();
             }
-            return Insert(deal);
         }
 
         public int SelectInt()

@@ -14,7 +14,7 @@ namespace ConsoleTestJob
         /// <summary>
         /// Количетсво строк данных в одном запросе
         /// </summary>
-        static private int SizeFealsRequest = 5000;
+        static private int SizeFealsRequest = 20000;
 
         static void Main(string[] args)
         {
@@ -32,18 +32,11 @@ namespace ConsoleTestJob
                     double size = SizeFealsRequest;
                     int iter = Convert.ToInt32(Math.Ceiling(total / size));
 
-                    var loandInt = 0; var addint = 0;
                     for (int i = 0; i <= iter; i++)
                     {
-                        var result = Request.PostDealAsync(SizeFealsRequest, i).Result;
-                        foreach (var item in result)
-                        {
-                            var t = sql.IsAddDeal(item);
-                            if (t < 0) loandInt++;
-                            else addint++;
-                        }
+                        sql.Bulk(Request.PostDealAsync(SizeFealsRequest, i).Result);
 
-                        Console.WriteLine($"Страница {i}/{iter}, загруженно {addint}, в базе {loandInt}. Всего: {addint + loandInt}/{total}");
+                        Console.WriteLine($"Страница {i}/{iter} загруженна. Всего строк: {total}");
                     }
 
                     Console.WriteLine($"{sql.SelectInt()}");

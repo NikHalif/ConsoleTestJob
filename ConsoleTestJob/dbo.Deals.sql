@@ -11,3 +11,8 @@
     PRIMARY KEY CLUSTERED ([id] ASC)
 );
 
+
+GO
+
+
+CREATE INDEX [IX_Deals_find] ON [dbo].[Deals] ([dealNumber],[dealDate])
