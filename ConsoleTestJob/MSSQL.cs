@@ -36,7 +36,7 @@ namespace ConsoleTestJob
                 else command.Parameters.AddWithValue("buyerInn", deal.buyerInn);
                 if (String.IsNullOrEmpty(deal.buyerName)) command.Parameters.AddWithValue("buyerName", DBNull.Value);
                 else command.Parameters.AddWithValue("buyerName", deal.buyerName);
-                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate < MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
+                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate > MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
                 else command.Parameters.AddWithValue("dealDate", deal.dealDate);
                 command.Parameters.AddWithValue("dealNumber", deal.dealNumber);
                 if (String.IsNullOrEmpty(deal.sellerInn)) command.Parameters.AddWithValue("sellerInn", DBNull.Value);
@@ -57,14 +57,14 @@ namespace ConsoleTestJob
         /// <returns></returns>
         public int IsAddDeal(Deal deal)
         {
-            var queryString = @"SELECT COUNT(*) FROM Deals WHERE buyerInn=@buyerInn AND buyerName=@buyerName AND dealDate=@dealDate AND dealNumber=@dealNumber AND sellerInn=@sellerInn AND sellerName=@sellerName AND woodVolumeBuyer=@woodVolumeBuyer AND woodVolumeSeller=@woodVolumeSeller";
+            /*var queryString = @"SELECT COUNT(*) FROM Deals WHERE buyerInn=@buyerInn AND buyerName=@buyerName AND dealDate=@dealDate AND dealNumber=@dealNumber AND sellerInn=@sellerInn AND sellerName=@sellerName AND woodVolumeBuyer=@woodVolumeBuyer AND woodVolumeSeller=@woodVolumeSeller";
             using (SqlCommand command = new SqlCommand(queryString, connection))
             {
                 if (String.IsNullOrEmpty(deal.buyerInn)) command.Parameters.AddWithValue("buyerInn", DBNull.Value);
                 else command.Parameters.AddWithValue("buyerInn", deal.buyerInn);
                 if (String.IsNullOrEmpty(deal.buyerName)) command.Parameters.AddWithValue("buyerName", DBNull.Value);
                 else command.Parameters.AddWithValue("buyerName", deal.buyerName);
-                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate < MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
+                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate > MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
                 else command.Parameters.AddWithValue("dealDate", deal.dealDate);
                 command.Parameters.AddWithValue("dealNumber", deal.dealNumber);
                 if (String.IsNullOrEmpty(deal.sellerInn)) command.Parameters.AddWithValue("sellerInn", DBNull.Value);
@@ -76,9 +76,61 @@ namespace ConsoleTestJob
 
                 var count = (Int32)command.ExecuteScalar();
                 if (count > 0) return -1;
-            }
+            }*/
             return Insert(deal);
         }
+
+        public int IsTestV1(Deal deal)
+        {
+            var queryString = @"SELECT COUNT(*) FROM Deals WHERE buyerInn=@buyerInn AND buyerName=@buyerName AND dealDate=@dealDate AND dealNumber=@dealNumber AND sellerInn=@sellerInn AND sellerName=@sellerName AND woodVolumeBuyer=@woodVolumeBuyer AND woodVolumeSeller=@woodVolumeSeller";
+            using (SqlCommand command = new SqlCommand(queryString, connection))
+            {
+                if (String.IsNullOrEmpty(deal.buyerInn)) command.Parameters.AddWithValue("buyerInn", DBNull.Value);
+                else command.Parameters.AddWithValue("buyerInn", deal.buyerInn);
+                if (String.IsNullOrEmpty(deal.buyerName)) command.Parameters.AddWithValue("buyerName", DBNull.Value);
+                else command.Parameters.AddWithValue("buyerName", deal.buyerName);
+                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate > MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
+                else command.Parameters.AddWithValue("dealDate", deal.dealDate);
+                command.Parameters.AddWithValue("dealNumber", deal.dealNumber);
+                if (String.IsNullOrEmpty(deal.sellerInn)) command.Parameters.AddWithValue("sellerInn", DBNull.Value);
+                else command.Parameters.AddWithValue("sellerInn", deal.sellerInn);
+                if (String.IsNullOrEmpty(deal.sellerName)) command.Parameters.AddWithValue("sellerName", DBNull.Value);
+                else command.Parameters.AddWithValue("sellerName", deal.sellerName);
+                command.Parameters.AddWithValue("woodVolumeBuyer", deal.woodVolumeBuyer);
+                command.Parameters.AddWithValue("woodVolumeSeller", deal.woodVolumeSeller);
+
+                return (Int32)command.ExecuteScalar();
+
+            }
+        }
+
+        public int IsTestV2(Deal deal)
+        {
+            var queryString = @"SELECT COUNT(*) FROM Deals WHERE dealNumber=@dealNumber AND buyerInn=@buyerInn AND sellerInn=@sellerInn AND buyerName=@buyerName AND sellerName=@sellerName AND dealDate=@dealDate AND woodVolumeBuyer=@woodVolumeBuyer AND woodVolumeSeller=@woodVolumeSeller";
+            using (SqlCommand command = new SqlCommand(queryString, connection))
+            {
+                command.Parameters.AddWithValue("dealNumber", deal.dealNumber);
+                if (String.IsNullOrEmpty(deal.sellerInn)) command.Parameters.AddWithValue("sellerInn", DBNull.Value);
+                else command.Parameters.AddWithValue("sellerInn", deal.sellerInn);
+                if (String.IsNullOrEmpty(deal.buyerInn)) command.Parameters.AddWithValue("buyerInn", DBNull.Value);
+                else command.Parameters.AddWithValue("buyerInn", deal.buyerInn);
+
+                if (String.IsNullOrEmpty(deal.buyerName)) command.Parameters.AddWithValue("buyerName", DBNull.Value);
+                else command.Parameters.AddWithValue("buyerName", deal.buyerName);
+                if (String.IsNullOrEmpty(deal.sellerName)) command.Parameters.AddWithValue("sellerName", DBNull.Value);
+                else command.Parameters.AddWithValue("sellerName", deal.sellerName);
+
+                if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate > MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
+                else command.Parameters.AddWithValue("dealDate", deal.dealDate);
+                
+                command.Parameters.AddWithValue("woodVolumeBuyer", deal.woodVolumeBuyer);
+                command.Parameters.AddWithValue("woodVolumeSeller", deal.woodVolumeSeller);
+
+                return (Int32)command.ExecuteScalar();
+
+            }
+        }
+
 
         public int SelectInt()
         {
@@ -102,7 +154,7 @@ namespace ConsoleTestJob
             else command.Parameters.AddWithValue("buyerInn", deal.buyerInn);
             if (String.IsNullOrEmpty(deal.buyerName)) command.Parameters.AddWithValue("buyerName", DBNull.Value);
             else command.Parameters.AddWithValue("buyerName", deal.buyerName);
-            if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate < MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
+            if (deal.dealDate == null || deal.dealDate < MinDate || deal.dealDate > MaxDate) command.Parameters.AddWithValue("dealDate", DBNull.Value);
             else command.Parameters.AddWithValue("dealDate", deal.dealDate);
             command.Parameters.AddWithValue("dealNumber", deal.dealNumber);
             if (String.IsNullOrEmpty(deal.sellerInn)) command.Parameters.AddWithValue("sellerInn", DBNull.Value);
