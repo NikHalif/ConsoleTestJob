@@ -39,7 +39,7 @@ namespace ConsoleTestJob
                         Console.WriteLine($"Страница {i}/{iter} загруженна. Всего строк: {total}");
                     }
 
-                    Console.WriteLine($"{sql.SelectInt()}");
+                    Console.WriteLine($"В базе {sql.SelectInt()}");
                 }
                 catch (Exception e)
                 {
